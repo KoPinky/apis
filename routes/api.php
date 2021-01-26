@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +25,25 @@ use Illuminate\Support\Facades\Route;
 // 4. update a single (PUT/PATCH)   /api/posts/{id}
 // 5. dalete (delete)   /api/posts/{id}
 
-Route::get('/posts');
+Route::get('/posts', function(){
+    $post = Post::create([
+        'title' => 'my first post', 
+        'slug' => 'my-first-post'
+        ]);
 
+    return $post;
+});
+
+
+//create route
+Route::post('/posts');
+
+
+//update route
+Route::put('/posts/{id}');
+
+//delete route
+Route::delete('/posts/{id');
 
 // to create resurces in laravel
 // 1. create a database and migration
