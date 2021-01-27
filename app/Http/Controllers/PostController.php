@@ -20,10 +20,12 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    
+    public function index(Request $request)
     {
-        //get all post
-        return Post::all()->take(2);
+        
+        return Post::all()->take(50);
     }
 
     /**
@@ -39,13 +41,15 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required'
         ]);
+
+        
         */
         
         //create a post
         $post = Post::create($request->all());
         $arr =Post::all();
         $this->centrifugo->publish('posts', ["posts" => $arr]);
-        return $arr;
+        return $post;
     }
 
     /**
@@ -67,6 +71,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+
+    //закрыты на тех работы ибо оно не нужно
+    /*
     public function update(Request $request, $id)
     {
         //update a post 
@@ -77,7 +85,7 @@ class PostController extends Controller
         $this->centrifugo->publish('posts', ["posts" => $arr]);
         return $post;
     }
-
+    */
     /**
      * Remove the specified resource from storage.
      *

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Models\Post;
 use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
@@ -30,11 +31,16 @@ Route::prefix('v1')->group(function(){
 
     Route::apiResource('posts', 'App\Http\Controllers\PostController');
 
+    Route::get('post/{id}/comments', [CommentController::class, 'index']);
+
+    Route::post('comments', [CommentController::class, 'store']);
+
+    Route::delete('comments/{commentId}', [CommentController::class, 'destroy']);
 });
 
 //this  will also return a post object
 
-Route::get('comments/{commentId}');
+
 
 
 // to create resurces in laravel

@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
+use App\Models\Post;
+use denis660\Centrifugo\Centrifugo;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+
+    public function __construct(Centrifugo $centrifugo)
+    {
+        $this->centrifugo = $centrifugo;
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
-    }
+
+     //закрыто на ТО, так как не нуда
 
     /**
      * Store a newly created resource in storage.
@@ -24,31 +30,14 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //создание коментария
+        $comment = Comment::create($request->all());
+        $arr =Comment::all();
+        $this->centrifugo->publish('comments', ["comments" => $arr]);
+        return $comment;
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -58,6 +47,11 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //удаление коментария
+        $comment = Comment::find($id);
+        $comment->destroy();
+        $arr =Comment::all();
+        $this->centrifugo->publish('comments', ["comments" => $arr]);
+        return $comment;
     }
 }

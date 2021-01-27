@@ -10,15 +10,18 @@ class Post extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'slug',
-        'likes',
-        'content'
+        'user_id',
+        'theme',
+        'text',
+        'pictures',
     ];
 
     protected $casts = [
-        'likes' => 'integer'
+        'user_id'=>'integer',
     ];
 
-    
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }
