@@ -20,8 +20,4 @@ class Post extends Model
         'user_id'=>'integer',
     ];
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
 }
