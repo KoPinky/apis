@@ -1,20 +1,11 @@
 <?php
-declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use Illuminate\Http\Request;
-use denis660\Centrifugo\Centrifugo;
 
-class PostController extends Controller
+class CommentController extends Controller
 {
-
-    private $centrifugo;
-
-    public function __construct(Centrifugo $centrifugo)
-    {
-        $this->centrifugo = $centrifugo;
-    }
     /**
      * Display a listing of the resource.
      *
@@ -22,8 +13,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        //get all post
-        return Post::all();
+        //
     }
 
     /**
@@ -34,16 +24,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //validate
-        $request->validate([
-            'title' => 'required'
-        ]);
-        
-        $arr =Post::all();
-        //create a post
-        
-        $this->centrifugo->publish('posts', ["posts" => $arr]);
-        return $arr;
+        //
     }
 
     /**
@@ -54,8 +35,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //show a post 
-        return Post::find($id);
+        //
     }
 
     /**
@@ -67,13 +47,7 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //update a post 
-
-        $post = Post::find($id);
-        $post->update($request->all());
-        $arr =Post::all();
-        $this->centrifugo->publish('posts', ["posts" => $arr]);
-        return $post;
+        //
     }
 
     /**
@@ -84,10 +58,6 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //delete a post 
-        $post = Post::destroy($id);
-        $arr =Post::all();
-        $this->centrifugo->publish('posts', ["posts" => $arr]);
-        return $post;
+        //
     }
 }

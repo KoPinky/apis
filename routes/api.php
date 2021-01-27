@@ -26,9 +26,15 @@ use Illuminate\Support\Facades\Route;
 // 4. update a single (PUT/PATCH)   /api/posts/{id}
 // 5. dalete (delete)   /api/posts/{id}
 
+Route::prefix('v1')->group(function(){
 
+    Route::apiResource('posts', 'App\Http\Controllers\PostController');
 
-Route::resource('posts', 'App\Http\Controllers\PostController');
+});
+
+//this  will also return a post object
+
+Route::get('comments/{commentId}');
 
 
 // to create resurces in laravel

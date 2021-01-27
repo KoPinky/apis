@@ -16,3 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('/{slug}', function($slug){
+    $post = App\Models\Post::whereSlug($slug)->first();
+
+    return view('post', ['post' => $post]);
+});
