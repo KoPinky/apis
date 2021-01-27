@@ -3,8 +3,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use denis660\Centrifugo\Centrifugo;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -21,13 +23,13 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    
-    public function index(Request $request)
+    /*
+    public function index()
     {
         
         return Post::all()->take(50);
     }
-
+*/
     /**
      * Store a newly created resource in storage.
      *
@@ -37,13 +39,15 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //validate
-        /*
+        
         $request->validate([
-            'title' => 'required'
+            'theme' => 'required',
+            'text' => 'required',
+            'user_id' => 'required',
         ]);
 
         
-        */
+        
         
         //create a post
         $post = Post::create($request->all());
@@ -58,11 +62,27 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    
     public function show($id)
     {
         //show a post 
-        return Post::find($id);
+        return Post::find($id)->where('user_id', $id);
     }
+
+    public function wall($id)
+    {
+        
+        //show a post 
+        $wall = DB::table('posts')
+        ->leftJoin('subscriptions', 'posts.user_id', '=', 'subscriptions.user_id')
+        ->leftJoin('users', 'users.id', '=', 'subscriptions.user_id')
+        ->where('user_id', $id)
+        ->where('subscriptions.added_id', $id)
+        ;
+        return $wall;
+
+    }
+
 
     /**
      * Update the specified resource in storage.

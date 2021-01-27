@@ -3,6 +3,7 @@
 use App\Http\Controllers\CommentController;
 use App\Models\Post;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,11 +29,14 @@ use Illuminate\Support\Facades\Route;
 // 5. dalete (delete)   /api/posts/{id}
 
 Route::prefix('v1')->group(function(){
-
-    Route::apiResource('posts', 'App\Http\Controllers\PostController');
+    Route::get('users/{id}/posts', [PostController::class, 'show']);
+    Route::get('users/{id}/wall', [PostController::class, 'wall']); 
+    Route::post('posts', [PostController::class, 'store']);
+    Route::delete('posts', [PostController::class, 'destroy']);
+    
+    Route::apiResource('users', 'App\Http\Controllers\UserController');
 
     Route::get('post/{id}/comments', [CommentController::class, 'index']);
-
     Route::post('comments', [CommentController::class, 'store']);
 
     Route::delete('comments/{commentId}', [CommentController::class, 'destroy']);
