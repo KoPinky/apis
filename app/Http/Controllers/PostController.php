@@ -23,7 +23,7 @@ class PostController extends Controller
     public function index()
     {
         //get all post
-        return Post::all();
+        return Post::all()->take(2);
     }
 
     /**
@@ -35,13 +35,15 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //validate
+        /*
         $request->validate([
             'title' => 'required'
         ]);
+        */
         
-        $arr =Post::all();
         //create a post
-        
+        $post = Post::create($request->all());
+        $arr =Post::all();
         $this->centrifugo->publish('posts', ["posts" => $arr]);
         return $arr;
     }
