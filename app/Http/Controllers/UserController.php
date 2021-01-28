@@ -48,7 +48,7 @@ class UserController extends Controller
                 ->leftJoin('black_lists', 'users.id', '=', 'black_lists.user_id')
                 ->where('black_lists.user_id', $id)
                 ->get();
-                return response()->json([
+                return response()->json([ 
                     'User' => $user,
                     'Subscriptions' => $Subsc,
                     'BlackList' => $blackList,
@@ -64,6 +64,11 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'login'=>'required',
+            'email'=>'required',
+            'password'=>'required'
+        ]);
         $user = User::find($id);
         $user->update($request->all());
         return $user;

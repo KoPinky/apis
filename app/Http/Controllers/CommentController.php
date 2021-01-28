@@ -30,6 +30,11 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'user_id'=>'required',
+            'post_id'=>'required',
+            'text'=>'required'
+        ]);
         //создание коментария
         $comment = Comment::create($request->all());
         $arr =Comment::all();

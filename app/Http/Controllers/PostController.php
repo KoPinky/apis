@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+
 use Illuminate\Http\Request;
 use denis660\Centrifugo\Centrifugo;
 use Illuminate\Support\Facades\DB;
@@ -71,13 +72,27 @@ class PostController extends Controller
 
     public function wall($id)
     {
-        
+        /*$wall = DB::table('posts')
+        ->join('subscriptions', 'subscriptions.added_id', '=', 'posts.user_id')
+           ->where('subscriptions.user_id', '=', $id)
+        ->where('posts.user_id', 'subscriptions.added_id')->get();  */
+        /*
         //show a post 
+        
         $wall = DB::select('select * from posts
         Join subscriptions on
         subscriptions.added_id = posts.user_id
         where posts.user_id = subscriptions.added_id and 
-        subscriptions.user_id = 3');
+        subscriptions.user_id = '. [$id]);
+        */
+        $wall = DB::select('select * from posts
+        Join subscriptions on
+        subscriptions.added_id = posts.user_id
+        where posts.user_id = subscriptions.added_id and 
+        subscriptions.user_id = '.$id.' LIMIT 50');
+        
+
+        
         return $wall;
 
     }
