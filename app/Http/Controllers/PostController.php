@@ -73,12 +73,11 @@ class PostController extends Controller
     {
         
         //show a post 
-        $wall = DB::table('posts')
-        ->leftJoin('subscriptions', 'posts.user_id', '=', 'subscriptions.user_id')
-        ->leftJoin('users', 'users.id', '=', 'subscriptions.user_id')
-        ->where('user_id', $id)
-        ->where('subscriptions.added_id', $id)
-        ;
+        $wall = DB::select('select * from posts
+        Join subscriptions on
+        subscriptions.added_id = posts.user_id
+        where posts.user_id = subscriptions.added_id and 
+        subscriptions.user_id = 3');
         return $wall;
 
     }

@@ -17,7 +17,7 @@ class CreateSubscriptionsTable extends Migration
             $table->id();
             $table->integer('user_id')->references('id')->on('users');
             $table->integer('added_id')->references('id')->on('users');
-            
+            $table->timestamps();
         });
     }
 

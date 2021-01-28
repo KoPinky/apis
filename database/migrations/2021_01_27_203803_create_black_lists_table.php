@@ -17,6 +17,7 @@ class CreateBlackListsTable extends Migration
             $table->id();
             $table->integer('user_id')->references('id')->on('users');
             $table->integer('blocked_id')->references('id')->on('users');
+            $table->timestamps();
         });
     }
 
