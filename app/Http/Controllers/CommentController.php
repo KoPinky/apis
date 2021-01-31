@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlackList;
 use App\Models\Comment;
 use App\Models\Post;
 use denis660\Centrifugo\Centrifugo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
@@ -39,12 +41,24 @@ class CommentController extends Controller
             'post_id'=>'required',
             'text'=>'required'
         ]);
-        //создание коментария
-        $request['user_id']= auth()->user()->id;
-        $comment = Comment::create($request->all());
-        $arr =Comment::all();
-        $this->centrifugo->publish('comments', ["comments" => $arr]);
-        return $comment;
+        $post = Post::Find($request['post_id']);
+        $req = BlackList::all()
+        ->where('user_id', $post['user_id'])
+        ->where('blocked_id', auth()->user()->id);
+        return var_dump($req->count);
+        if (is_null($req))
+        { 
+            //создание коментарий
+            $request['user_id']= auth()->user()->id;
+            $comment = Comment::create($request->all());
+            $arr =Comment::all();
+            $this->centrifugo->publish('comments', ["comments" => $arr]);
+            return $comment;
+        }
+        else{
+            return 'you cannot leave a comment';
+        }
+        
 
     }
 

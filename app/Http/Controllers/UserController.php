@@ -27,9 +27,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showProfile()
+    public function showProfile($id = null)
     {
-        $id = (int) auth()->user()->getAuthIdentifier();
+        $id = (is_null($id))?(int) auth()->user()->getAuthIdentifier():$id;
         
         $user = User::find($id);
         $Subsc = DB::table('users')

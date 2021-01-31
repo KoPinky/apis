@@ -43,6 +43,7 @@ Route::prefix('v1')->group(function(){
 
     //все для профилей
     Route::middleware('auth:api')->get('profile', [UserController::class, 'showProfile']);//показать профиль авторизовнного пользователя
+    Route::middleware('auth:api')->get('profile/{id}', [UserController::class, 'showProfile']);//показать профиль авторизовнного пользователя
     Route::middleware('auth:api')->post('user', [UserController::class, 'updateProfile']);//обновление своего профиля
 
     //все для постов
