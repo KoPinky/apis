@@ -36,11 +36,11 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id'=>'required',
             'post_id'=>'required',
             'text'=>'required'
         ]);
         //создание коментария
+        $request['user_id']= auth()->user()->id;
         $comment = Comment::create($request->all());
         $arr =Comment::all();
         $this->centrifugo->publish('comments', ["comments" => $arr]);
@@ -58,10 +58,18 @@ class CommentController extends Controller
     public function destroy($id)
     {
         //удаление коментария
-        $comment = Comment::find($id);
-        $comment->destroy();
-        $arr =Comment::all();
-        $this->centrifugo->publish('comments', ["comments" => $arr]);
-        return $comment;
+        $user = auth()->user();
+        if($user){
+            $comment = Comment::find($id);
+            if(!is_null($comment) and $user->id == $comment->user_id){
+                $post = Comment::destroy($id);
+                $arr =Comment::all();
+                $this->centrifugo->publish('comments', ["comments" => $arr]);
+                return 'Comment deleted';
+            }
+            else{
+                return 'You cant delete someone else`s comment';
+            }
+        }
     }
 }

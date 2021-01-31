@@ -63,13 +63,14 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-    public function show($id)
+    public function show($id = null)
     {
         //show a post 
-        return Post::find($id)->where('user_id', $id);
+        $id = (is_null($id))? auth()->user()->id : $id;
+        return Post::all()->where('user_id', $id);
     }
 
-    public function wall($id)
+    public function wall()
     {
         /*$wall = DB::table('posts')
         ->join('subscriptions', 'subscriptions.added_id', '=', 'posts.user_id')
@@ -88,7 +89,7 @@ class PostController extends Controller
         Join subscriptions on
         subscriptions.added_id = posts.user_id
         where posts.user_id = subscriptions.added_id and 
-        subscriptions.user_id = '.$id.' LIMIT 50');
+        subscriptions.user_id = '.auth()->user()->id.' LIMIT 50');
         
 
         
@@ -128,9 +129,19 @@ class PostController extends Controller
     public function destroy($id)
     {
         //delete a post 
-        $post = Post::destroy($id);
-        $arr =Post::all();
-        $this->centrifugo->publish('posts', ["posts" => $arr]);
-        return $post;
+        $user = auth()->user();
+        if($user){
+            $post = Post::find($id);
+            if(!is_null($post) and $user->id == $post->user_id){
+                $post = Post::destroy($id);
+                $arr =Post::all();
+                $this->centrifugo->publish('posts', ["posts" => $arr]);
+                return 'Post deleted';
+            }
+            else{
+                return 'You cant delete someone else`s post';
+            }
+        }
+        
     }
 }

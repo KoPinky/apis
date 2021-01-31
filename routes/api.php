@@ -43,112 +43,37 @@ Route::prefix('v1')->group(function(){
 
     //все для профилей
     Route::middleware('auth:api')->get('profile', [UserController::class, 'showProfile']);//показать профиль авторизовнного пользователя
-    Route::middleware('auth:api')->post('user', [UserController::class, 'updateProfile']);
+    Route::middleware('auth:api')->post('user', [UserController::class, 'updateProfile']);//обновление своего профиля
 
     //все для постов
+    Route::middleware('auth:api')->get('posts', [PostController::class, 'show']);// просмотр своих постов авторизованным пользователем
+    Route::middleware('auth:api')->get('posts/{id}', [PostController::class, 'show']);// просмотр чужих постов авторизованным пользователем
     Route::middleware('auth:api')->post('posts', [PostController::class, 'store']);// создание поста авторизованным пользователем
-    Route::middleware('auth:api')->delete('posts', [PostController::class, 'destroy']);
+    Route::middleware('auth:api')->delete('posts/{id}', [PostController::class, 'destroy']);// удаление поста авторизованным пользователем
+    Route::middleware('auth:api')->get('users/wall', [PostController::class, 'wall']); 
     
+    //все для коментов
+    Route::middleware('auth:api')->post('comments', [CommentController::class, 'store']);//создание коментария
+    Route::middleware('auth:api')->delete('comments/{id}', [CommentController::class, 'destroy']); //удаление коментария
 
-
-    Route::middleware('auth:api')->get('users/{id}/wall', [PostController::class, 'wall']); 
     
+    //все для блэк листа
+    Route::middleware('auth:api')->get('blackList/{id}', [BlackListController::class, 'check']);// проверка на нахождение в черном списке
+    Route::middleware('auth:api')->post('blackList', [BlackListController::class, 'store']); //добавление в черный список
     
-    
-    Route::post('comments', [CommentController::class, 'store']);
-    
+    //все для подписания
+    Route::middleware('auth:api')->post('subscription', [SubscriptionController::class, 'store']);//подписапться на кого либо
     
     // не тестил
-    Route::get('users/{id}/posts', [PostController::class, 'show']);
     
     
     
-    //Route::apiResource('users', 'App\Http\Controllers\UserController');
     
+    //log out на всякий случай
+    /*
     Route::get('logOut', function(){
-        Auth::logout();
-        return 'you\'re log out';
+        auth()->logout();
+        return response()->json(['message' => 'Successfully logged out']);
     });
-    Route::get('ch0', function(){
-        
-        return Auth::check()? 'true': 'false';
-    });
-    Route::get('post/{id}/comments', [CommentController::class, 'index']);
-    
-
-    Route::post('blackList', [BlackListController::class, 'store']);
-    Route::post('blackListCheck', [BlackListController::class, 'check']);
-
-    Route::post('Subscription', [SubscriptionController::class, 'store']);
+    */
 });
-
-//this  will also return a post object
-//все для авторизации
-Route::group([
-
-    'middleware' => 'api',
-    'prefix' => 'auth'
-
-], function ($router) {
-
-    Route::post('login', 'App\Http\Controllers\AuthController@login');
-    Route::post('logout', 'App\Http\Controllers\AuthController@logout');
-    Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
-    Route::post('me', 'App\Http\Controllers\AuthController@me');
-
-});
-
-
-// to create resurces in laravel
-// 1. create a database and migration
-// 2. create a model
-// 2.5 create a service? Elaquement ORM
-// 3. create a controller to go get info from the database
-// 4. return thet info
-
-//ОТСТОЙНИК
-/*
-
-*/
-
-
-
-/*
-Route::middleware('auth:api')->get('/user', function(Request $request){
-    return $request->user();
-});
-
-
-
-Route::get('/posts', 'PostController@index');
-Route::post('/posts', 'PostController@store');
-Route::put('/posts', 'PostController@update');
-Route::delete('/posts', 'PostController@destroy');
-Route::get('/posts', 'PostController@index');
-Route::get('/posts', 'PostController@index');
-
-Route::get('/posts', function(){
-    $post = Post::create([
-        'title' => 'my first post', 
-        'slug' => 'my-first-post'
-        ]);
-
-    return $post;
-});
-
-
-//create route
-Route::post('/posts');
-
-
-//update route
-Route::put('/posts/{id}');
-
-//delete route
-Route::delete('/posts/{id');
-
-
-    Route::get('/test-api', function(){
-    return ['message' => 'hello'];
-});
-*/
