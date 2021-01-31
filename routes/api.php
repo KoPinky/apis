@@ -33,14 +33,34 @@ use Illuminate\Support\Facades\Route;
 // 5. dalete (delete)   /api/posts/{id}
 
 Route::prefix('v1')->group(function(){
-    Route::get('users/{id}/posts', [PostController::class, 'show']);
+
+    //РАБОТАЮЩИЕ МЕТОДЫ XD:)
+    
+    //Все для авторизации
+    Route::post('auth', [AccountController::class, 'auth']);
+    Route::post('register', [AccountController::class, 'register']);
+
+
+    //все для профилей
+    Route::middleware('auth:api')->get('profile', [UserController::class, 'showProfile']);//показать профиль авторизовнного пользователя
+    Route::middleware('auth:api')->post('user', [UserController::class, 'update']);
+
+
     Route::middleware('auth:api')->get('users/{id}/wall', [PostController::class, 'wall']); 
+    
+    
+    
+    Route::post('comments', [CommentController::class, 'store']);
+    
+    
+    // не тестил
+    Route::get('users/{id}/posts', [PostController::class, 'show']);
+    
     Route::post('posts', [PostController::class, 'store']);
     Route::delete('posts', [PostController::class, 'destroy']);
     
     Route::apiResource('users', 'App\Http\Controllers\UserController');
-    Route::post('auth', [AccountController::class, 'auth']);
-    Route::post('register', [AccountController::class, 'register']);
+    
     Route::get('logOut', function(){
         Auth::logout();
         return 'you\'re log out';
@@ -50,7 +70,7 @@ Route::prefix('v1')->group(function(){
         return Auth::check()? 'true': 'false';
     });
     Route::get('post/{id}/comments', [CommentController::class, 'index']);
-    Route::post('comments', [CommentController::class, 'store']);
+    
 
     Route::post('blackList', [BlackListController::class, 'store']);
     Route::post('blackListCheck', [BlackListController::class, 'check']);
@@ -59,7 +79,7 @@ Route::prefix('v1')->group(function(){
 });
 
 //this  will also return a post object
-
+//все для авторизации
 Route::group([
 
     'middleware' => 'api',

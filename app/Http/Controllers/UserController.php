@@ -27,24 +27,26 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function showProfile()
     {
+        $id = (int) auth()->user()->getAuthIdentifier();
+        
         $user = User::find($id);
         $Subsc = DB::table('users')
-        ->select(['login', 'email'])
+            ->select(['login', 'email'])
             ->leftJoin('subscriptions', 'users.id', '=', 'subscriptions.user_id')
             ->where('subscriptions.user_id', $id)
             ->get();
         $blackList = DB::table('users')
-        ->select(['login', 'email'])
-                ->leftJoin('black_lists', 'users.id', '=', 'black_lists.user_id')
-                ->where('black_lists.user_id', $id)
-                ->get();
-                return response()->json([ 
-                    'User' => $user,
-                    'Subscriptions' => $Subsc,
-                    'BlackList' => $blackList,
-                ]);
+            ->select(['login', 'email'])
+            ->leftJoin('black_lists', 'users.id', '=', 'black_lists.user_id')
+            ->where('black_lists.user_id', $id)
+            ->get();
+        return response()->json([ 
+            'User' => $user,
+            'Subscriptions' => $Subsc,
+            'BlackList' => $blackList,
+        ]); 
     }
 
     /**
@@ -56,12 +58,13 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         $request->validate([
             'login'=>'required',
             'email'=>'required',
             'password'=>'required'
         ]);
-        $user = User::find($id);
+        $user =User::find((int) auth()->user()->getAuthIdentifier());
         $user->update($request->all());
         return $user;
     }

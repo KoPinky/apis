@@ -33,22 +33,22 @@ class AccountController extends Controller
      */
     public function Auth(Request $request)
     {   
-        echo "shaha\n";
         $credentials = $request->only('login', 'password');
-        if(!Auth::check()){
-            if (Auth::attempt($credentials, true))
-            {
-                $request->session()->regenerate();
 
-                return redirect()->intended('dashboard');
-            }
-            else{
-                return 'invalid data';
-            }
+        if ($token = auth()->attempt($credentials)) {
+            return $this->respondWithToken($token);
         }
-        else{
-            return 'You are logged in_';
-        }
+
+        return response()->json(['error' => 'Unauthorized'], 401);
         
-    }     
+    }   
+    
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
+    }
 }
