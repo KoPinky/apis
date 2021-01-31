@@ -44,9 +44,8 @@ class PostController extends Controller
         $request->validate([
             'theme' => 'required',
             'text' => 'required',
-            'user_id' => 'required',
         ]);
-
+        $request['user_id'] =(int) auth()->user()->getAuthIdentifier(); 
         
         
         

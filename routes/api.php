@@ -43,7 +43,12 @@ Route::prefix('v1')->group(function(){
 
     //все для профилей
     Route::middleware('auth:api')->get('profile', [UserController::class, 'showProfile']);//показать профиль авторизовнного пользователя
-    Route::middleware('auth:api')->post('user', [UserController::class, 'update']);
+    Route::middleware('auth:api')->post('user', [UserController::class, 'updateProfile']);
+
+    //все для постов
+    Route::middleware('auth:api')->post('posts', [PostController::class, 'store']);// создание поста авторизованным пользователем
+    Route::middleware('auth:api')->delete('posts', [PostController::class, 'destroy']);
+    
 
 
     Route::middleware('auth:api')->get('users/{id}/wall', [PostController::class, 'wall']); 
@@ -56,10 +61,9 @@ Route::prefix('v1')->group(function(){
     // не тестил
     Route::get('users/{id}/posts', [PostController::class, 'show']);
     
-    Route::post('posts', [PostController::class, 'store']);
-    Route::delete('posts', [PostController::class, 'destroy']);
     
-    Route::apiResource('users', 'App\Http\Controllers\UserController');
+    
+    //Route::apiResource('users', 'App\Http\Controllers\UserController');
     
     Route::get('logOut', function(){
         Auth::logout();

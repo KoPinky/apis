@@ -56,14 +56,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function updateProfile(Request $request)
     {
 
-        $request->validate([
-            'login'=>'required',
-            'email'=>'required',
-            'password'=>'required'
-        ]);
+        
         $user =User::find((int) auth()->user()->getAuthIdentifier());
         $user->update($request->all());
         return $user;
