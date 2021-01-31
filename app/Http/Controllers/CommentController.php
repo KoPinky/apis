@@ -22,6 +22,11 @@ class CommentController extends Controller
 
      //закрыто на ТО, так как не нуда
 
+     public function index($id)
+    {
+        return Comment::all()->where('post_id', $id);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
