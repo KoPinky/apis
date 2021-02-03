@@ -70,7 +70,7 @@ class UserController extends Controller
             ->leftJoin('black_lists', 'users.id', '=', 'black_lists.user_id')
             ->where('black_lists.user_id', $id)
             ->get();
- 
+            
         // сборщик ответа    
         $profile = [ 
                 'User' => $user,

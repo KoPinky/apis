@@ -7,10 +7,8 @@ use App\Models\Post;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
-use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
@@ -51,10 +49,14 @@ Route::prefix('v1')->group(function(){
     Route::middleware('auth:api')->post('user', [UserController::class, 'updateProfile']);//обновление своего профиля
 
     //все для постов
-    Route::middleware('auth:api')->get('posts', [PostController::class, 'show']);// просмотр своих постов авторизованным пользователем
-    Route::middleware('auth:api')->get('posts/{id}', [PostController::class, 'show']);// просмотр чужих постов авторизованным пользователем
-    Route::middleware('auth:api')->post('posts', [PostController::class, 'store']);// создание поста авторизованным пользователем
-    Route::middleware('auth:api')->delete('posts/{id}', [PostController::class, 'destroy']);// удаление поста авторизованным пользователем
+    Route::group(['prefix' => '/posts', 'middleware' => 'auth:api'], function() {
+        Route::get('', [PostController::class, 'show']);// просмотр своих постов авторизованным пользователем
+        Route::get('{id}', [PostController::class, 'show']);// просмотр чужих постов авторизованным пользователем
+        Route::post('', [PostController::class, 'store']);// создание поста авторизованным пользователем
+        Route::delete('{id}', [PostController::class, 'destroy']);// удаление поста авторизованным пользователем
+        
+    });
+    
     Route::middleware('auth:api')->get('users/wall', [PostController::class, 'wall']); 
     
     //все для коментов
@@ -77,7 +79,7 @@ Route::prefix('v1')->group(function(){
         
         foreach ($users as $user) {
             $id = $user->id;
-        //запросы    
+            //запросы    
             $user = User::find($id);
 
             $Subsc = DB::table('users')
@@ -86,13 +88,12 @@ Route::prefix('v1')->group(function(){
             ->where('subscriptions.user_id', $id)
             ->get();
             
-
             $blackList = DB::table('users')
             ->select(['login', 'email'])
             ->leftJoin('black_lists', 'users.id', '=', 'black_lists.user_id')
             ->where('black_lists.user_id', $id)
             ->get();
-            
+
             $posts = Post::all()->where('user_id', $id);
         // сборщик ответа    
         $profile = [ 
@@ -110,8 +111,6 @@ Route::prefix('v1')->group(function(){
         Redis::set('user_posts_'.$id, $response_posts);
         Redis::set('user_profile_'.$user->id, $response_profile);
         }
-        
-        
         return 'Complite!';
     });
     
