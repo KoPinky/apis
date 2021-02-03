@@ -27,7 +27,7 @@ class PostFactory extends Factory
         return [
             'theme' => $this->faker->name,
             'text' => $this->faker->text(),
-            'user_id' => rand(0, 50), 
+            'user_id' => rand(1, 50), 
         ];
     }
 }

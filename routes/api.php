@@ -7,8 +7,12 @@ use App\Models\Post;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
+use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 
 
@@ -43,7 +47,7 @@ Route::prefix('v1')->group(function(){
 
     //все для профилей
     Route::middleware('auth:api')->get('profile', [UserController::class, 'showProfile']);//показать профиль авторизовнного пользователя
-    Route::middleware('auth:api')->get('profile/{id}', [UserController::class, 'showProfile']);//показать профиль авторизовнного пользователя
+    Route::middleware('auth:api')->get('profile/{id}', [UserController::class, 'showProfile']);//показать профиль другого пользователя
     Route::middleware('auth:api')->post('user', [UserController::class, 'updateProfile']);//обновление своего профиля
 
     //все для постов
@@ -68,7 +72,48 @@ Route::prefix('v1')->group(function(){
     // не тестил
     
     
-    
+    Route::get('redisInit', function(Request $request){
+        $users = User::all();
+        
+        foreach ($users as $user) {
+            $id = $user->id;
+        //запросы    
+            $user = User::find($id);
+
+            $Subsc = DB::table('users')
+            ->select(['login', 'email'])
+            ->leftJoin('subscriptions', 'users.id', '=', 'subscriptions.user_id')
+            ->where('subscriptions.user_id', $id)
+            ->get();
+            
+
+            $blackList = DB::table('users')
+            ->select(['login', 'email'])
+            ->leftJoin('black_lists', 'users.id', '=', 'black_lists.user_id')
+            ->where('black_lists.user_id', $id)
+            ->get();
+            
+            $posts = Post::all()->where('user_id', $id);
+        // сборщик ответа    
+        $profile = [ 
+                'User' => $user,
+                'Subscriptions' => $Subsc,
+                'BlackList' => $blackList
+            
+        ];
+        $response_profile = json_encode([
+            'Profile' => $profile,
+        ]);
+        $response_posts = json_encode([
+            'posts' => $posts
+        ]);
+        Redis::set('user_posts_'.$id, $response_posts);
+        Redis::set('user_profile_'.$user->id, $response_profile);
+        }
+        
+        
+        return 'Complite!';
+    });
     
     //log out на всякий случай
     /*

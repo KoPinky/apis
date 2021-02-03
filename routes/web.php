@@ -17,9 +17,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
-Route::get('/{slug}', function($slug){
-    $post = App\Models\Post::whereSlug($slug)->first();
-
-    return view('post', ['post' => $post]);
+Route::get('/ini', function(){
+    return view('myphpinfo');
 });

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redis;
 
 class UserController extends Controller
 {
@@ -65,14 +67,47 @@ class UserController extends Controller
         return $user;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    //обновление redis'а
+    public function refresh_redis_profile($id)
     {
-        //
+        
+        //запросы    
+            $user = User::find($id);
+
+            $Subsc = DB::table('users')
+            ->select(['login', 'email'])
+            ->leftJoin('subscriptions', 'users.id', '=', 'subscriptions.user_id')
+            ->where('subscriptions.user_id', $id)
+            ->get();
+            
+
+            $blackList = DB::table('users')
+            ->select(['login', 'email'])
+            ->leftJoin('black_lists', 'users.id', '=', 'black_lists.user_id')
+            ->where('black_lists.user_id', $id)
+            ->get();
+            
+            
+        // сборщик ответа    
+        $profile = [ 
+                'User' => $user,
+                'Subscriptions' => $Subsc,
+                'BlackList' => $blackList
+            
+        ];
+        $response = json_encode([
+            'Profile' => $profile,
+            
+        ]);
+        Redis::set('User_profile_'.$id, $response);
+    }
+
+
+    public function refresh_redis_posts($id){
+        $posts = Post::all()->where('user_id', $id);
+        $response = json_encode([
+            'posts' => $posts
+        ]);
+        Redis::set('User_posts_'.$id, $response);
     }
 }
