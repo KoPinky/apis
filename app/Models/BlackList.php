@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class BlackList
+ * 
+ * @property int user_id
+ * @property int blocked_id
+ * 
+ * @package App/Models
+ */
 class BlackList extends Model
 {
     use HasFactory;

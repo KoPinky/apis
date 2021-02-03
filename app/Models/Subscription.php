@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Subscription
+ * 
+ * @property int user_id
+ * @property int added_id
+ * 
+ * @package App/Models
+ */
 class Subscription extends Model
 {
     use HasFactory;
