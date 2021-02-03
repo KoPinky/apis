@@ -22,6 +22,7 @@ class AccountController extends Controller
             'password' => Hash::make($request['password']),
             
         ]);
+        $this->refresh_redis_profile($user->id);
         return $user;
     }
     /**

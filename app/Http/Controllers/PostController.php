@@ -7,6 +7,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use denis660\Centrifugo\Centrifugo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class PostController extends Controller
 {
@@ -39,6 +40,11 @@ class PostController extends Controller
 
         //create a post
         $post = Post::create($request->all());
+        
+        //set in Redis
+        $this->refresh_redis_posts($request['user_id']);
+
+        //publish to centrifugo
         $arr =Post::all();
         $this->centrifugo->publish('posts', ["posts" => $arr]);
         return $post;
@@ -52,9 +58,14 @@ class PostController extends Controller
      */
     public function show($id = null)
     {
+        //standart way
+        /*
         //show a post 
         $id = (is_null($id))? auth()->user()->id : $id;
         return Post::all()->where('user_id', $id);
+        */
+        $id = (is_null($id))? auth()->user()->id : $id;
+        return response(Redis::get('user_posts_'.$id))->header('Content-Type', 'application/json');
     }
 
     /**
@@ -89,6 +100,7 @@ class PostController extends Controller
                 $post = Post::destroy($id);
                 $arr =Post::all();
                 $this->centrifugo->publish('posts', ["posts" => $arr]);
+                $this->refresh_redis_posts($user->id);
                 return 'Post deleted';
             }
             else{

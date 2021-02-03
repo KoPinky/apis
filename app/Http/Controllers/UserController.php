@@ -21,22 +21,7 @@ class UserController extends Controller
     {
         $id = (is_null($id))?(int) auth()->user()->getAuthIdentifier():$id;
         
-        $user = User::find($id);
-        $Subsc = DB::table('users')
-            ->select(['login', 'email'])
-            ->leftJoin('subscriptions', 'users.id', '=', 'subscriptions.user_id')
-            ->where('subscriptions.user_id', $id)
-            ->get();
-        $blackList = DB::table('users')
-            ->select(['login', 'email'])
-            ->leftJoin('black_lists', 'users.id', '=', 'black_lists.user_id')
-            ->where('black_lists.user_id', $id)
-            ->get();
-        return response()->json([ 
-            'User' => $user,
-            'Subscriptions' => $Subsc,
-            'BlackList' => $blackList,
-        ]); 
+        return response(Redis::get('user_profile_'.$id))->header('Content-Type', 'application/json');
     }
 
     /**
@@ -50,11 +35,12 @@ class UserController extends Controller
     {
         $user = User::find((int) auth()->user()->getAuthIdentifier());
         $user->update($request->all());
+        $this->refresh_redis_profile($user->id);
         return $user;
     }
 
     //обновление redis'а
-    public function refresh_redis_profile($id)
+    public function refresh_redis_profile(int $id)
     {
         //запросы    
             $user = User::find($id);
@@ -80,15 +66,6 @@ class UserController extends Controller
         $response = json_encode([
             'Profile' => $profile,
         ]);
-        Redis::set('User_profile_'.$id, $response);
-    }
-
-
-    public function refresh_redis_posts($id){
-        $posts = Post::all()->where('user_id', $id);
-        $response = json_encode([
-            'posts' => $posts
-        ]);
-        Redis::set('User_posts_'.$id, $response);
+        Redis::set('user_profile_'.$id, $response);
     }
 }
