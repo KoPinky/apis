@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Model;
 use App\Models\Subscription;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -23,8 +22,8 @@ class SubscriptionFactory extends Factory
     public function definition()
     {
         return [
-            'user_id'=>rand(0,50),
-            'added_id'=>rand(0, 50),
+            'user_id' => rand(0,50),
+            'added_id' => rand(0, 50),
         ];
     }
 }

@@ -2,8 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Model;
-use Illuminate\Support\Str;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

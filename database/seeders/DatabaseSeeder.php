@@ -7,8 +7,6 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Subscription;
 use App\Models\User;
-use Database\Factories\UserFactory;
-use Faker\Factory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder

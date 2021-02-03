@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\BlackList;
-use App\Models\Model;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BlackListFactory extends Factory
@@ -23,8 +22,8 @@ class BlackListFactory extends Factory
     public function definition()
     {
         return [
-            'user_id'=>rand(0,50),
-            'blocked_id'=>rand(0, 50),
+            'user_id' => rand(1,50),
+            'blocked_id' => rand(1, 50),
         ];
     }
 }
