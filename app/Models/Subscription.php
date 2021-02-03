@@ -18,7 +18,7 @@ class Subscription extends Model
         'added_id'
     ];
     protected $casts = [
-        'user_id'=>'integer',
-        'added_id'=>'integer',
+        'user_id' => 'integer',
+        'added_id' => 'integer',
     ];
 }

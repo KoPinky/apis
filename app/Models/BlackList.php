@@ -18,7 +18,7 @@ class BlackList extends Model
         'blocked_id'
     ];
     protected $casts = [
-        'user_id'=>'integer',
-        'blocked_id'=>'integer',
+        'user_id' => 'integer',
+        'blocked_id' => 'integer',
     ];
 }
