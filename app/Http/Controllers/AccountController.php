@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AccountController extends Controller
@@ -34,11 +33,9 @@ class AccountController extends Controller
     public function Auth(Request $request)
     {   
         $credentials = $request->only('login', 'password');
-
         if ($token = auth()->attempt($credentials)) {
             return $this->respondWithToken($token);
         }
-
         return response()->json(['error' => 'Unauthorized'], 401);
         
     }   

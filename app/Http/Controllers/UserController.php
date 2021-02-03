@@ -12,18 +12,6 @@ use Illuminate\Support\Facades\Redis;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    
-
-    /**
      * Display the specified resource.
      *
      * @param  int  $id
@@ -60,9 +48,7 @@ class UserController extends Controller
      */
     public function updateProfile(Request $request)
     {
-
-        
-        $user =User::find((int) auth()->user()->getAuthIdentifier());
+        $user = User::find((int) auth()->user()->getAuthIdentifier());
         $user->update($request->all());
         return $user;
     }
@@ -70,7 +56,6 @@ class UserController extends Controller
     //обновление redis'а
     public function refresh_redis_profile($id)
     {
-        
         //запросы    
             $user = User::find($id);
 
@@ -79,25 +64,21 @@ class UserController extends Controller
             ->leftJoin('subscriptions', 'users.id', '=', 'subscriptions.user_id')
             ->where('subscriptions.user_id', $id)
             ->get();
-            
 
             $blackList = DB::table('users')
             ->select(['login', 'email'])
             ->leftJoin('black_lists', 'users.id', '=', 'black_lists.user_id')
             ->where('black_lists.user_id', $id)
             ->get();
-            
-            
+ 
         // сборщик ответа    
         $profile = [ 
                 'User' => $user,
                 'Subscriptions' => $Subsc,
-                'BlackList' => $blackList
-            
+                'BlackList' => $blackList      
         ];
         $response = json_encode([
             'Profile' => $profile,
-            
         ]);
         Redis::set('User_profile_'.$id, $response);
     }

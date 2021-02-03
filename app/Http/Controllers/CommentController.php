@@ -7,24 +7,30 @@ use App\Models\Comment;
 use App\Models\Post;
 use denis660\Centrifugo\Centrifugo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
+    private $centrifugo;
 
+    /**
+     * Class __construct
+     * 
+     * @param Centrifugo $centrifugo
+     */
     public function __construct(Centrifugo $centrifugo)
     {
         $this->centrifugo = $centrifugo;
     }
+    
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Show all posts
+     *  
+     * @param mixed $id
+     * 
+     * @return App\Models\Comment
      */
-
-     //закрыто на ТО, так как не нуда
-
-     public function index($id)
+    public function index($id)
     {
         return Comment::all()->where('post_id', $id);
     }
@@ -38,35 +44,33 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'post_id'=>'required',
-            'text'=>'required'
+            'post_id' => 'required',
+            'text' => 'required'
         ]);
         $post = Post::Find($request['post_id']);
         $req = BlackList::all()
         ->where('user_id', $post['user_id'])
-        ->where('blocked_id', auth()->user()->id);
-        return var_dump($req->count);
+        ->where('blocked_id', auth()
+        ->user()->id);
         if (is_null($req))
         { 
             //создание коментарий
-            $request['user_id']= auth()->user()->id;
+            $request['user_id'] = auth()->user()->id;
             $comment = Comment::create($request->all());
-            $arr =Comment::all();
+            $arr = Comment::all();
             $this->centrifugo->publish('comments', ["comments" => $arr]);
             return $comment;
         }
         else{
             return 'you cannot leave a comment';
         }
-        
-
     }
-
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
+     * 
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -77,7 +81,7 @@ class CommentController extends Controller
             $comment = Comment::find($id);
             if(!is_null($comment) and $user->id == $comment->user_id){
                 $post = Comment::destroy($id);
-                $arr =Comment::all();
+                $arr = Comment::all();
                 $this->centrifugo->publish('comments', ["comments" => $arr]);
                 return 'Comment deleted';
             }
