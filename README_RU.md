@@ -7,10 +7,42 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## Развертывание проекта
-Для развертывания проекта необходимо выполнить команду:
+Getting started
+Installation
+Please check the official laravel installation guide for server requirements before you start. Official Documentation
+
+Alternative installation is possible without local dependencies relying on Docker.
+
+Clone the repository
 ```bash
 git clone https://github.com/KoPinky/apis.git
 ```
-
-
+Switch to the repo folder
+```bash
+cd apis
+```
+Install all the dependencies using composer
+```bash
+composer install
+```
+Copy the example env file and make the required configuration changes in the .env file
+```bash
+cp .env.example .env
+```
+Generate a new application key
+```bash
+php artisan key:generate
+```
+Generate a new JWT authentication secret key
+```bash
+php artisan jwt:generate
+```
+Run the database migrations (Set the database connection in .env before migrating)
+```bash
+php artisan migrate
+```
+Start the local development server
+```bash
+php artisan serve
+```
+You can now access the server at http://localhost:8000
