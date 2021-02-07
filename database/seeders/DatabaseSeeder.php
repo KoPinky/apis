@@ -19,19 +19,19 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         User::factory()
-        ->count(50)
-        ->create();
+            ->count(50)
+            ->create();
         Post::factory()
-        ->count(50)
-        ->create();
+            ->count(50)
+            ->create();
         Subscription::factory()
-        ->count(50)
-        ->create();
+            ->count(50)
+            ->create();
         BlackList::factory()
-        ->count(50)
-        ->create();
+            ->count(50)
+            ->create();
         Comment::factory()
-        ->count(50)
-        ->create();
+            ->count(50)
+            ->create();
     }
 }

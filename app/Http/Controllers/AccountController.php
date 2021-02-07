@@ -9,10 +9,8 @@ use Illuminate\Support\Facades\Hash;
 class AccountController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return mixed
      */
     public function register(Request $request)
     {
@@ -20,7 +18,6 @@ class AccountController extends Controller
             'login' => $request['login'],
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
-            
         ]);
         $this->refresh_redis_profile($user->id);
         return $user;
@@ -28,19 +25,23 @@ class AccountController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return \Illuminate\Http\JsonResponse|string
      */
     public function Auth(Request $request)
-    {   
+    {
         $credentials = $request->only('login', 'password');
         if ($token = auth()->attempt($credentials)) {
             return $this->respondWithToken($token);
         }
+
         return response()->json(['error' => 'Unauthorized'], 401);
-        
-    }   
-    
+    }
+
+    /**
+     * @param $token
+     * @return \Illuminate\Http\JsonResponse
+     */
     protected function respondWithToken($token)
     {
         return response()->json([

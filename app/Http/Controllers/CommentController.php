@@ -13,33 +13,17 @@ class CommentController extends Controller
     private $centrifugo;
 
     /**
-     * Class __construct
-     * 
+     * CommentController constructor.
      * @param Centrifugo $centrifugo
      */
     public function __construct(Centrifugo $centrifugo)
     {
         $this->centrifugo = $centrifugo;
     }
-    
 
     /**
-     * Show all posts
-     *  
-     * @param mixed $id
-     * 
-     * @return App\Models\Comment
-     */
-    public function index($id)
-    {
-        return Comment::all()->where('post_id', $id);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
@@ -49,44 +33,37 @@ class CommentController extends Controller
         ]);
         $post = Post::Find($request['post_id']);
         $req = BlackList::all()
-        ->where('user_id', $post['user_id'])
-        ->where('blocked_id', auth()
-        ->user()->id);
-        if (is_null($req))
-        { 
+            ->where('user_id', $post['user_id'])
+            ->where('blocked_id', auth()->user()->id);
+        if (is_null($req)) {
             //создание коментарий
             $request['user_id'] = auth()->user()->id;
             $comment = Comment::create($request->all());
             $arr = Comment::all();
             $this->centrifugo->publish('comments', ["comments" => $arr]);
-            return $comment;
-        }
-        else{
-            return 'you cannot leave a comment';
+            return response()->json($comment);
+        } else {
+            return response()->json('you cannot leave a comment');
         }
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * 
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
         //удаление коментария
         $user = auth()->user();
-        if($user){
+        if ($user) {
             $comment = Comment::find($id);
-            if(!is_null($comment) and $user->id == $comment->user_id){
+            if (!is_null($comment) and $user->id == $comment->user_id) {
                 $post = Comment::destroy($id);
                 $arr = Comment::all();
                 $this->centrifugo->publish('comments', ["comments" => $arr]);
-                return 'Comment deleted';
-            }
-            else{
-                return 'You cant delete someone else`s comment';
+                return response()->json('Comment deleted');
+            } else {
+                return response()->json('You cant delete someone else`s comment');
             }
         }
     }

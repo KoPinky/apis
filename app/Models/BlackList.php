@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class BlackList
- * 
+ *
+ * @property int id
  * @property int user_id
  * @property int blocked_id
- * 
+ * @property datetime timestamps
+ *
  * @package App/Models
  */
 class BlackList extends Model
@@ -19,12 +21,15 @@ class BlackList extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array|string[]
      */
     protected $fillable = [
         'user_id',
         'blocked_id'
     ];
+    /**
+     * @var array|string[]
+     */
     protected $casts = [
         'user_id' => 'integer',
         'blocked_id' => 'integer',

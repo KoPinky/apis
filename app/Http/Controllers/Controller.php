@@ -16,28 +16,32 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
      //обновление redis'а
+
+    /**
+     * @param int $id
+     */
      public function refresh_redis_profile(int $id)
      {
-         //запросы    
+         //запросы
              $user = User::find($id);
- 
-             $Subsc = DB::table('users')
+
+             $subscription = DB::table('users')
              ->select(['login', 'email'])
              ->leftJoin('subscriptions', 'users.id', '=', 'subscriptions.user_id')
              ->where('subscriptions.user_id', $id)
              ->get();
- 
+
              $blackList = DB::table('users')
              ->select(['login', 'email'])
              ->leftJoin('black_lists', 'users.id', '=', 'black_lists.user_id')
              ->where('black_lists.user_id', $id)
              ->get();
-             
-         // сборщик ответа    
-         $profile = [ 
+
+         // сборщик ответа
+         $profile = [
                  'User' => $user,
-                 'Subscriptions' => $Subsc,
-                 'BlackList' => $blackList      
+                 'Subscriptions' => $subscription,
+                 'BlackList' => $blackList
          ];
          $response = json_encode([
              'Profile' => $profile,
@@ -45,7 +49,9 @@ class Controller extends BaseController
          Redis::set('user_profile_'.$id, $response);
      }
 
-
+    /**
+     * @param int $id
+     */
      public function refresh_redis_posts(int $id)
      {
         $posts = Post::all()->where('user_id', $id);
