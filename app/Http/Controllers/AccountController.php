@@ -14,7 +14,7 @@ class AccountController extends Controller
      */
     public function register(Request $request)
     {
-        $user = User::forceCreate([
+        $user = User::create([
             'login' => $request['login'],
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
