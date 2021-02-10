@@ -1,0 +1,12 @@
+h1{
+    font-size: 250px;
+}
+
+.center {
+    background: #236542;;
+    width: 250px;
+    height: 250px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
