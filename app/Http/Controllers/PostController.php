@@ -76,11 +76,12 @@ class PostController extends Controller
      */
     public function wall()
     {
-        $wall = DB::select('select * from posts
-        Join subscriptions on
-        subscriptions.added_id = posts.user_id
-        where posts.user_id = subscriptions.added_id and
-        subscriptions.user_id = ' . auth()->user()->id . ' LIMIT 50');
+        $wall = Post::query()
+            ->join('subscriptions', 'subscriptions.added_id', '=', 'posts.user_id')
+            ->where('posts.user_id', '=', 'subscriptions.added_id')
+            ->where('subscriptions.user_id', '=', auth()->user()->id)
+            ->limit(50)
+            ->get();
 
         return response()->json($wall);
     }

@@ -31,8 +31,8 @@ class CommentController extends Controller
             'post_id' => 'required',
             'text' => 'required'
         ]);
-        $post = Post::Find($request['post_id']);
-        $req = BlackList::all()
+        $post = Post::find($request['post_id']);
+        $req = BlackList::query()
             ->where('user_id', $post['user_id'])
             ->where('blocked_id', auth()->user()->id);
         if (is_null($req)) {

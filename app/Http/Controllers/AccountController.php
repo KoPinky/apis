@@ -19,13 +19,14 @@ class AccountController extends Controller
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
         ]);
-        $this->refresh_redis_profile($user->id);
+        $this->refresh_redis_profile(s$user->id);
         return $user;
     }
+
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse|string
      */
     public function Auth(Request $request)
