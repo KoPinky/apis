@@ -19,7 +19,7 @@ class AccountController extends Controller
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
         ]);
-        $this->refresh_redis_profile(s$user->id);
+        $this->refresh_redis_profile($user->id);
         return $user;
     }
 

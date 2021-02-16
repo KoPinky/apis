@@ -54,7 +54,7 @@ class Controller extends BaseController
      */
      public function refresh_redis_posts(int $id)
      {
-        $posts = Post::query()->where('user_id', $id);
+        $posts = Post::query()->where('user_id', $id)->get();
         $response = json_encode([
             'posts' => $posts
         ]);

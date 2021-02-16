@@ -34,8 +34,8 @@ class CommentController extends Controller
         $post = Post::find($request['post_id']);
         $req = BlackList::query()
             ->where('user_id', $post['user_id'])
-            ->where('blocked_id', auth()->user()->id);
-        if (is_null($req)) {
+            ->where('blocked_id', auth()->user()->id)->exists();
+        if ($req) {
             //создание коментарий
             $request['user_id'] = auth()->user()->id;
             $comment = Comment::create($request->all());
@@ -59,7 +59,7 @@ class CommentController extends Controller
             $comment = Comment::find($id);
             if (!is_null($comment) and $user->id == $comment->user_id) {
                 $post = Comment::destroy($id);
-                $arr = Comment::all();
+                $arr = Comment::orderBy('id', 'desc')->take(50)->get();
                 $this->centrifugo->publish('comments', ["comments" => $arr]);
                 return response()->json('Comment deleted');
             } else {

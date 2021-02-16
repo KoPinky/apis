@@ -48,7 +48,7 @@ class PostController extends Controller
         $this->refresh_redis_posts($request['user_id']);
 
         //publish to centrifugo
-        $arr = Post::all();
+        $arr = Post::orderBy('id', 'desc')->take(100)->get();;
         $this->centrifugo->publish('posts', ["posts" => $arr]);
         return response()->json($post);
     }
